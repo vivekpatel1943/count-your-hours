@@ -39,10 +39,6 @@ export function AuthProvider({ children }) {
         const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/login`, credentials);
         console.log(response.data)
         console.log(response.data.token)
-        if(!response.data.token){
-            console.log("login response does not contain a token..")
-            throw new Error("Invalid login response..")
-        }
         localStorage.setItem('token', response.data.token);
         const profileRes = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/profile`, {
             headers : {Authorization: response.data.token}

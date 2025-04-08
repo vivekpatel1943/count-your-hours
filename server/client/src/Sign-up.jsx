@@ -7,7 +7,6 @@ import backwardArrow from './assets/backward.png';
 
 function Signup() {
     const navigate = useNavigate();
-    const {login} = useAuth();
     const [formData, setFormData] = useState({
         username: "",
         email: "",
@@ -33,9 +32,7 @@ function Signup() {
             console.log(response);
             // Assuming the response contains the token and user data
             localStorage.setItem("token", response.data.token);
-            // after successfull signup
-            await login({email:formData.email,password:formData.password})
-            navigate("/profile");
+            navigate("/profile"); // Redirect after successful signup
         } catch (err) {
             setError("Signup failed. Please try again.");
             setLoading(false);

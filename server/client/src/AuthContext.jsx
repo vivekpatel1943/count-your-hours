@@ -1,30 +1,23 @@
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+/* import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { useState, useEffect, createContext, useContext } from 'react';
 import axios from 'axios';
-import Signup from './Sign-up';
-import Login from './Log-in';
+import Signup from './Signup';
+import Login from './Login';
 import Profile from './Profile';
-import LandingPage from './landingPage';
 import App from './App';
-import LandingRedirect from './LandingRedirect';
-import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
 
-// we will be passing react-components as arguments in place of children parameter
 export function AuthProvider({ children }) {
-
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        // console.log(token)
         if (token) {
             axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/profile`, {
-                headers: { Authorization: `${token}` }
+                headers: { Authorization: `Bearer ${token}` }
             }).then(response => {
-                console.log(response.data)
                 setUser(response.data);
             }).catch(() => {
                 localStorage.removeItem('token');
@@ -36,28 +29,18 @@ export function AuthProvider({ children }) {
     }, []);
 
     const login = async (credentials) => {
-        const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/login`, credentials);
-        console.log(response.data)
-        console.log(response.data.token)
-        if(!response.data.token){
-            console.log("login response does not contain a token..")
-            throw new Error("Invalid login response..")
-        }
+        const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/login`, credentials);
         localStorage.setItem('token', response.data.token);
-        const profileRes = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/profile`, {
-            headers : {Authorization: response.data.token}
-        })
-        setUser(profileRes.data);
+        setUser(response.data.user);
     };
 
     const logout = () => {
-        localStorage.removeItem("token");
+        localStorage.removeItem('token');
         setUser(null);
-    }
+    };
 
-   
     return (
-        <AuthContext.Provider value={{ user, login, logout,loading }}>
+        <AuthContext.Provider value={{ user, login, logout }}>
             {!loading && children}
         </AuthContext.Provider>
     );
@@ -68,12 +51,8 @@ export function useAuth() {
 }
 
 function ProtectedRoute({ children }) {
-    const { user,loading } = useAuth();
-
-    if(loading) {
-        return <div>loading...</div>
-    }
-    return user && children;
+    const { user } = useAuth();
+    return user ? children : <Navigate to='/login' />;
 }
 
 export default function Root() {
@@ -81,9 +60,7 @@ export default function Root() {
         <AuthProvider>
             <Router>
                 <Routes>
-                    <Route path='/' element={<LandingRedirect/>}/>
-                    <Route path='/page' element={<LandingPage/>}/>
-                    <Route path='/home' element={<ProtectedRoute><App /></ProtectedRoute>} />
+                    <Route path='/' element={<App />} />
                     <Route path='/signup' element={<Signup />} />
                     <Route path='/login' element={<Login />} />
                     <Route path='/profile' element={<ProtectedRoute><Profile /></ProtectedRoute>} />
@@ -92,3 +69,4 @@ export default function Root() {
         </AuthProvider>
     );
 }
+ */
