@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 function FormPage({ AddJournalsFn, handleNewTaskButtonClickFn,formModalOpen }) {
     return (
         <div className="h-screen flex items-center justify-center bg-gray-900">

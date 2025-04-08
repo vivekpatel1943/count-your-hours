@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import { BarChart, Bar, Legend, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
+import { useAuth } from './Root';
+import { useNavigate } from 'react-router-dom';
 
-function GraphPage({ filterDataFn, tasks, selectGraphTypeFn, filteredTasks, graphType, updateTaskFn, deleteTaskFn,handleNewTaskButtonClickFn}) {
+
+function GraphPage({ filterDataFn, tasks, selectGraphTypeFn, filteredTasks, graphType, updateTaskFn, deleteTaskFn, handleNewTaskButtonClickFn }) {
+
+    const { user, logout } = useAuth();
+
+    const navigate = useNavigate();
 
     console.log(filteredTasks);
 
@@ -14,7 +21,7 @@ function GraphPage({ filterDataFn, tasks, selectGraphTypeFn, filteredTasks, grap
         if (!task) return;
         setSelectedTask(task);
         setNewTaskText(task.task); // Prefill with current task
-        setNewAddTime(task.time); // Prefill with current time
+        setNewAddTime(0); // Prefill with 0
         setModalOpen(true);
     };
 
@@ -28,6 +35,7 @@ function GraphPage({ filterDataFn, tasks, selectGraphTypeFn, filteredTasks, grap
         setModalOpen(false);
     };
 
+
     const handleGraphClick = (e) => {
         if (!e || !e.activeLabel) return;
         const clickedTask = filteredTasks.find((task) => task.task === e.activeLabel);
@@ -36,11 +44,27 @@ function GraphPage({ filterDataFn, tasks, selectGraphTypeFn, filteredTasks, grap
         }
     };
 
+    const navigateToLandingPage = () => {
+        logout();
+        navigate('/page');
+    }
+
+    const navigateToProfilePage = () => {
+        navigate('/profile');
+    }
+
+
     return (
-        <div className="h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-6">
+        <div className="h-screen  bg-gray-900  text-white p-6 flex flex-col items-center justify-center">
+            <div className='fixed top-4 right-4 flex gap-2 flex-wrap'>
+                <button onClick={navigateToLandingPage} className='border-2 border-white text-white rounded px-2 py-1 mr-2 bg-blue-500'>Logout</button>
+                <button onClick={navigateToProfilePage} className='border-2 border-white text-white rounded bg-orange-400 px-2 py-1'><strong>{user.username}</strong></button>
+            </div>
+
             {/* Filter and Graph Type Selection */}
+
             <div className="flex gap-4 mb-6">
-            <button onClick={handleNewTaskButtonClickFn} className='px-4 py-2 bg-gray-800 text-white rounded-lg shadow-md border border-gray-600 focus:ring-2 focus:ring-blue-500'>NewTask</button>
+                <button onClick={handleNewTaskButtonClickFn} className='px-4 py-2 bg-gray-800 text-white rounded-lg shadow-md border border-gray-600 focus:ring-2 focus:ring-blue-500'>NewTask</button>
                 <select
                     onChange={(e) => filterDataFn(tasks, e.target.value)}
                     className="px-4 py-2 bg-gray-800 text-white rounded-lg shadow-md border border-gray-600 focus:ring-2 focus:ring-blue-500"

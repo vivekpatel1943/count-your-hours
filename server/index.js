@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import cookieParser from 'cookie-parser';
+// import cookieParser from 'cookie-parser';
 
 // Model
 import Task from './Model/Tasks.js';
@@ -22,14 +22,15 @@ const app = express();
 
 // setting up the middlewares
 app.use(express.json()) //makes json request available as javascript object
-app.use(cookieParser())
+// app.use(cookieParser())
 
 // cors help you to share resource with servers running on different ports,
 // Allows frontend requests and enable credentials
-app.use(cors({
+/* app.use(cors({
     origin: "http://localhost:5173/", //Adjust to your frontend url
     credentials : true //allows frontend to send cookies to the backend
-})) 
+}))  */
+app.use(cors());
 
 // connecting to mongodb database;
 mongoose.connect(process.env.mongo_uri)
@@ -59,8 +60,12 @@ app.get('/api/profile',authMiddleware, async (req,res) => {
 
 
 app.post('/api/add-task',authMiddleware, async (req,res) => {
+   
     try{
+        console.log("hello")
+        console.log("request body",req.body)
         const {taskText,timeSpent} = req.body;
+        
         const time = parseFloat(timeSpent);
         const userId = req.user.userId; //get user id from token
         console.log(userId)
@@ -78,17 +83,18 @@ app.post('/api/add-task',authMiddleware, async (req,res) => {
             task.timeLogs.push({timeSpent:time,date:new Date()})
             console.log(task.totalTime)
             await task.save();
-            res.json({msg:"Task-updated,time added to existing task..", task});
+            return res.status(200).json({msg:"Task-updated,time added to existing task..", task});
         }else{
             // if the task doesn't exist , create a new one
             const newTask = new Task({userId:userId,task:taskText,totalTime:time,timeLogs:[{timeSpent:time,date:new Date()}]});
             console.log(newTask)
             await newTask.save();
-            res.json({msg:"New task has been saved in the database..",task:newTask});
+            return res.status(200).json({msg:"New task has been saved in the database..",task:newTask});
         }
 
     }catch(err){
-        res.status(500).json({msg:"internal server error..",err})
+        console.log("error")
+        return res.status(500).json({msg:"internal server error..",err})
     }
 })
 
@@ -105,8 +111,6 @@ app.get('/api/tasks',authMiddleware, async (req,res) => {
         res.status(500).json({msg:"internal server error.."});
     }
 })
-
-
 
 // get individual tasks
 app.get('/api/tasks/:id',authMiddleware,async (req,res) => {
@@ -177,6 +181,10 @@ app.delete('/api/tasks/:id',authMiddleware,async(req,res) => {
     }catch(err){
         res.status(500).json({msg:"internal server error.."})
     }
+})
+
+app.post('/api/logout',authMiddleware,async(req,res) => {
+    res.status(200).json({message:"logged out.."})
 })
 
 const port = process.env.port || 3000;
