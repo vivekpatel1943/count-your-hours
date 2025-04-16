@@ -16,7 +16,7 @@ router.post('/signup',async(req,res) => {
         const {username,email,password} = req.body;
 
         if(!username || !email ||!password){
-            res.status(400).json({msg:"username,email and password are required.."})
+            return res.status(400).json({msg:"username,email and password are required.."})
         }
 
         // 10 is the number of salt rounds here, salt rounds simply means the number of times password will be hashed recursively, higher salt round safer the password but more the time required, 
