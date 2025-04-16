@@ -33,7 +33,7 @@ const authMiddleware = (req, res, next) => {
 
     }catch (err) {
         console.error(err)
-        return res.status(500).json({ msg: "Invalid Token" ,err})
+        return res.status(500).json({ msg: "internal server error.." ,err})
         
     }
    

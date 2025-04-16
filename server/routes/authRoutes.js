@@ -4,7 +4,6 @@ import jwt from 'jsonwebtoken';
 import User from '../Model/User.js';
 import dotenv from 'dotenv';
 
-
 // configuring the environment variables
 dotenv.config();
 

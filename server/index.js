@@ -47,7 +47,7 @@ app.get('/api/profile',authMiddleware, async (req,res) => {
         const user = await User.findById(req.user.userId).select('-password');
 
         if(!user){
-            res.status(404).json({msg:"user not found.."})
+            return res.status(404).json({msg:"user not found.."})
         }
 
         res.status(200).send(user)
@@ -118,7 +118,7 @@ app.get('/api/tasks/:id',authMiddleware,async (req,res) => {
         const task = await Task.findOne({_id:req.params.id,userId:req.user.userId});
 
         if(!task){
-            res.status(404).json({msg:"task not found"})
+            return res.status(404).json({msg:"task not found"})
         }
 
         res.json({"requested task":task});
@@ -136,15 +136,15 @@ app.patch('/api/tasks/:id',authMiddleware,async (req,res) => {
         addTime =  parseFloat(addTime);
         
         if(!data){
-            res.status(404).json({msg:"task not found"})
+            return res.status(404).json({msg:"task not found"})
         }    
     
         if(!taskText && !addTime){
-            res.status(400).json({msg:"invalid request"})
+            return res.status(400).json({msg:"invalid request"})
         }
 
        if(!taskText){
-        data.task = data.task;
+            data.task = data.task;
        }
 
        if(!addTime){
@@ -172,7 +172,7 @@ app.delete('/api/tasks/:id',authMiddleware,async(req,res) => {
         const taskId = req.params.id;
 
         if(!task){
-            res.status(404).json({msg:"task not found in the database..."});
+            return res.status(404).json({msg:"task not found in the database..."});
         }
 
         await Task.findByIdAndDelete(taskId);
